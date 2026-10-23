@@ -2,6 +2,8 @@
 
 기획서 `윷놀이_게임_기획서.md`를 바탕으로 만든 정적 웹 게임입니다. HTML·CSS·JavaScript와 SVG만 사용하며, 게임 실행에는 패키지 설치·백엔드·외부 AI API가 필요하지 않습니다.
 
+**온라인 플레이:** [윷놀이 게임 열기](https://mararong.github.io/Game/) — PC·모바일 브라우저에서 설치 없이 실행할 수 있습니다.
+
 ## 바로 실행하기
 
 `index.html`을 Chrome, Edge, Firefox, Safari 등 최신 브라우저로 열면 됩니다. 파일을 더블클릭해서 실행할 수 있고, 다섯 개의 게임 파일을 함께 두면 오프라인으로도 플레이할 수 있습니다.
@@ -34,11 +36,13 @@ npm run start:lan
 
 저장소: [mararong/Game](https://github.com/mararong/Game)
 
-최초 1회 [저장소 Settings → Pages](https://github.com/mararong/Game/settings/pages)에서 Build and deployment의 Source를 **GitHub Actions**로 선택합니다. 그런 다음 [Actions](https://github.com/mararong/Game/actions)에서 **Verify and deploy Yutnori → Run workflow → main**을 실행합니다. 이후 main에 푸시하면 테스트와 배포가 자동으로 진행됩니다.
+GitHub Actions와 GitHub Pages를 통한 자동 배포가 활성화되어 있습니다. `main`에 푸시하면 검사·테스트·정적 파일 생성·배포가 자동으로 진행됩니다. [Actions 실행 기록](https://github.com/mararong/Game/actions)에서 상태를 확인할 수 있습니다.
 
-배포가 성공하면 `https://mararong.github.io/Game/`에서 컴퓨터가 꺼져 있어도 PC·모바일 브라우저로 게임을 열 수 있습니다. 이 주소는 Pages 설정과 배포가 완료된 뒤 사용할 수 있으며, 설정 전에는 404가 표시됩니다.
+배포 설정을 다시 할 때는 [저장소 Settings → Pages](https://github.com/mararong/Game/settings/pages)에서 Build and deployment의 Source를 **GitHub Actions**로 선택하고, Actions에서 **Verify and deploy Yutnori → Run workflow → main**을 실행합니다.
 
-현재 Game 저장소는 비공개입니다. 비공개 저장소의 Pages 사용에는 이를 지원하는 GitHub 요금제가 필요합니다. [GitHub 공식 Pages 안내](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#availability-of-github-pages)를 참고하세요. 공개 범위는 이번 작업에서 변경하지 않습니다. 현재 요금제에서 Pages를 지원하지 않으면 아래 정적 파일을 다른 정적 웹 호스팅에 올리거나 같은 Wi-Fi 접속 방법을 사용할 수 있습니다.
+게임 주소는 **https://mararong.github.io/Game/** 입니다. 게임을 만들던 컴퓨터가 꺼져 있어도 PC·모바일 브라우저로 열 수 있고, 같은 Wi-Fi에 연결할 필요도 없습니다. 각 기기에서 별도의 한 판이 실행됩니다.
+
+현재 Game 저장소는 공개 상태입니다. 공개 저장소의 GitHub Pages는 GitHub Free에서도 사용할 수 있습니다. [GitHub 공식 Pages 안내](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages)를 참고하세요.
 
 배포 전에 파일만 만들려면 다음을 실행합니다.
 
