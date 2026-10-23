@@ -1,0 +1,51 @@
+name: Verify and deploy Yutnori
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Test and prepare static game
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Check JavaScript
+        run: npm run check
+      - name: Test rules, AI and game controller
+        run: npm test
+      - name: Package static game
+        run: npm run build
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy GitHub Pages
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Read GitHub Pages configuration
+        uses: actions/configure-pages@v5
+      - name: Deploy the game
+        id: deployment
+        uses: actions/deploy-pages@v4

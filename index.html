@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#F6F7F9">
+  <meta name="description" content="함께 또는 AI와 즐기는 윷놀이. 설치 없이 개인전과 2대2 팀전을 즐겨보세요.">
+  <title>윷놀이 · 함께라서 더 즐거운 한 판</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23243B64'/%3E%3Cg fill='%23fff'%3E%3Crect x='16' y='14' width='6' height='36' rx='3' transform='rotate(-12 19 32)'/%3E%3Crect x='29' y='14' width='6' height='36' rx='3'/%3E%3Crect x='42' y='14' width='6' height='36' rx='3' transform='rotate(12 45 32)'/%3E%3C/g%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script src="rules.js" defer></script>
+  <script src="ai.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="윷놀이 처음 화면">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>윷놀이<span class="brand-sub">YUTNORI</span></span>
+      </a>
+      <nav class="header-actions" aria-label="게임 메뉴">
+        <span class="local-badge"><span></span> 한 기기에서 함께</span>
+        <button class="button quiet compact" id="rules-button" type="button"><span aria-hidden="true">☷</span> 규칙 보기</button>
+        <button class="button quiet compact" id="restart-button" type="button" hidden><span aria-hidden="true">↻</span> 다시 시작</button>
+      </nav>
+    </header>
+    <main id="main" tabindex="-1">
+      <section id="setup-screen" class="setup-screen" aria-labelledby="setup-title">
+        <div class="intro">
+          <span class="eyebrow">작은 윷 네 개, 함께하는 즐거움</span>
+          <h1 id="setup-title">우리, 윷놀이 한 판 할까요?</h1>
+          <p>친구와 함께, 혼자라면 AI와 함께.<br class="mobile-break"> 익숙한 우리 놀이를 가볍게 즐겨보세요.</p>
+        </div>
+        <form id="setup-form" class="setup-card" novalidate>
+          <div class="section-heading"><span class="step-number">01</span><h2>어떻게 즐길까요?</h2></div>
+          <div id="mode-options" class="mode-options" role="group" aria-label="게임 방식">
+            <button type="button" data-mode="individual" class="mode-option selected" aria-pressed="true"><span class="mode-icon" aria-hidden="true">♙</span><span><strong>개인전</strong><small>각자 4개의 말로 겨뤄요</small></span><span class="mode-check" aria-hidden="true">✓</span></button>
+            <button type="button" data-mode="team" class="mode-option" aria-pressed="false"><span class="mode-icon" aria-hidden="true">♙♙</span><span><strong>팀전</strong><small>둘이 한 팀, 함께 완주해요</small></span><span class="mode-check" aria-hidden="true">✓</span></button>
+          </div>
+          <div class="player-count-row"><span id="count-label">참가 인원</span><div id="count-options" class="segmented" role="group" aria-labelledby="count-label"><button type="button" data-count="2" aria-pressed="true" class="selected">2명</button><button type="button" data-count="3" aria-pressed="false">3명</button><button type="button" data-count="4" aria-pressed="false">4명</button></div><span id="team-description" class="team-description" hidden>2대2 <span>·</span> 팀당 말 4개 공유</span></div>
+          <div class="setup-divider"></div>
+          <div class="section-heading participant-heading"><span class="step-number">02</span><h2>함께할 사람을 정해주세요</h2><button id="fill-ai" class="text-button" type="button"><span aria-hidden="true">＋</span> 빈자리 AI로 채우기</button></div>
+          <div id="participant-list"></div>
+          <p class="setup-note"><span aria-hidden="true">ⓘ</span> 사람은 한 기기에서 번갈아 조작하고, AI는 자동으로 플레이해요.</p>
+          <button type="submit" class="button primary start-button">게임 시작 <span aria-hidden="true">→</span></button>
+          <p id="setup-error" class="error-message" role="alert" hidden></p>
+        </form>
+        <div class="feature-strip" aria-label="게임 특징"><span><i aria-hidden="true">✧</i> 설치 없이 바로</span><span><i aria-hidden="true">♧</i> 최대 4명과 함께</span><span><i aria-hidden="true">⌘</i> 혼자서도 AI와</span></div>
+      </section>
+      <section id="game-screen" class="game-screen" aria-label="윷놀이 게임" hidden>
+        <div class="game-heading"><div><span class="eyebrow" id="game-mode-label">개인전 · 2인</span><h1>즐거운 한 판</h1></div><div class="game-heading-actions"><span class="turn-counter" id="turn-counter">1번째 차례</span><button id="main-menu-button" class="button compact" type="button"><span aria-hidden="true">⌂</span> 메인으로</button></div></div>
+        <div class="game-layout">
+          <div class="board-column">
+            <div class="turn-banner" id="turn-banner"></div>
+            <div id="scoreboard" class="scoreboard" aria-label="참가자 현황"></div>
+            <div class="board-card"><div class="board-topline"><span><span class="tiny-board-icon" aria-hidden="true">◇</span> 우리의 윷판</span><span id="board-caption">말 4개를 먼저 완주하세요</span></div><div id="board-container" class="board-container"></div><div class="board-footnote"><span><i></i> 선택한 말</span><span><i class="destination-key"></i> 이동할 곳</span><span class="direction-note">왼쪽 아래에서 출발 →</span></div></div>
+          </div>
+          <aside class="control-column" aria-label="게임 조작">
+            <section class="control-card throw-card" aria-labelledby="throw-title">
+              <div class="panel-heading"><h2 id="throw-title">윷을 던져보세요</h2><span class="mini-label">행운을 담아</span></div>
+              <div id="stick-display" class="stick-display" aria-hidden="true"></div>
+              <div id="last-result" class="last-result"></div>
+              <button id="throw-button" type="button" class="button primary throw-button"><span aria-hidden="true">↟</span> 윷 던지기</button>
+              <p id="action-hint" class="action-hint" role="status" aria-live="polite" aria-atomic="true"></p>
+              <div class="results-section"><div class="panel-heading"><h3>남은 이동 결과</h3><span id="result-count" class="count-badge">0</span></div><div id="result-list" class="result-list"></div></div>
+            </section>
+            <section class="control-card selection-card" aria-labelledby="selection-title"><div class="panel-heading"><h2 id="selection-title">어떤 말을 움직일까요?</h2><span class="mini-label" id="selection-owner"></span></div><div id="piece-list" class="piece-list"></div><div id="destination-section" class="destination-section" hidden><div class="panel-heading"><h3>도착점을 선택하세요</h3></div><div id="destination-list" class="destination-list"></div></div></section>
+            <details class="control-card history-card" open><summary>최근 이야기 <span aria-hidden="true">⌄</span></summary><ol id="history-list" class="history-list"></ol></details>
+          </aside>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer"><span>함께라서 더 즐거운, 우리 놀이.</span><span>YUTNORI <i aria-hidden="true">✦</i></span></footer>
+  </div>
+  <dialog id="game-dialog" class="game-dialog" aria-labelledby="dialog-title"><div id="dialog-content"></div></dialog>
+  <noscript><p>윷놀이를 실행하려면 브라우저의 JavaScript를 켜주세요.</p></noscript>
+</body>
+</html>
