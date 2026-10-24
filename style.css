@@ -20,3 +20,63 @@
 .game-heading-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-shrink:0}
 .game-heading-actions .button,.game-heading-actions .turn-counter{white-space:nowrap}
 @media(max-width:599px){.game-heading{gap:12px}.game-heading-actions{flex-direction:column;align-items:flex-end;gap:4px}}
+
+/* Keep throwing, piece selection and recent history together below the board. */
+@media (max-width: 899px) {
+  .control-column {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: "throw selection" "throw history";
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+  .control-column > .control-card { min-width: 0; }
+  .throw-card { grid-area: throw; }
+  .selection-card { grid-area: selection; }
+  .history-card { grid-area: history; }
+  .history-list {
+    display: block;
+    max-height: 180px;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 599px) {
+  .control-column { gap: 10px; }
+  .control-column > .control-card { padding: 12px 10px; border-radius: 12px; }
+  .control-column > .history-card { padding: 0; }
+  .control-column .panel-heading { flex-wrap: wrap; gap: 4px; }
+  .control-column .panel-heading h2 { font-size: 12px; overflow-wrap: anywhere; }
+  .control-column .panel-heading h3 { font-size: 11px; }
+  .selection-card .mini-label { width: 100%; text-align: left; overflow-wrap: anywhere; }
+  .throw-card .mini-label { display: none; }
+  .stick-display { height: 80px; gap: 9px; margin-top: 6px; }
+  .yut-stick { width: 16px; height: 56px; }
+  .yut-stick .pattern { inset: 15px 4px; }
+  .yut-stick:not(.flat) .pattern { inset: 12px 6px; }
+  .last-result { min-height: 52px; padding-bottom: 8px; }
+  .last-result.empty { font-size: 11px; }
+  .last-result strong { font-size: 24px; }
+  .throw-button { min-height: 48px; padding: 10px 6px; gap: 6px; font-size: 13px; }
+  .action-hint { min-height: 0; padding-top: 8px; font-size: 11px; }
+  .results-section { padding-top: 12px; margin-top: 12px; }
+  .result-list { gap: 6px; margin-top: 8px; }
+  .result-chip { flex: 1 1 58px; min-width: 0; max-width: 100%; padding: 8px 6px; gap: 5px; font-size: 12px; }
+  .result-list .empty-list { font-size: 11px; overflow-wrap: anywhere; }
+  .piece-list { grid-template-columns: minmax(0, 1fr); gap: 6px; margin-top: 10px; }
+  .piece-option { min-height: 44px; padding: 6px; gap: 6px; }
+  .piece-option > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+  .piece-dot { width: 26px; height: 26px; font-size: 11px; }
+  .piece-option strong, .piece-option small { font-size: 11px; }
+  .destination-section { margin-top: 12px; padding-top: 10px; }
+  .destination-list { margin-top: 8px; gap: 6px; }
+  .destination-option { min-width: 0; min-height: 44px; padding: 8px 6px; gap: 5px; overflow-wrap: anywhere; }
+  .destination-option > span { min-width: 0; }
+  .destination-option strong, .destination-option small { font-size: 11px; }
+  .destination-number { width: 20px; height: 20px; }
+  .history-card summary { min-height: 44px; padding: 10px; gap: 4px; font-size: 12px; }
+  .history-list { max-height: 144px; padding: 0 10px 10px; }
+  .history-list li { padding-left: 10px; padding-bottom: 8px; font-size: 11px; }
+}
+
