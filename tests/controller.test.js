@@ -67,9 +67,9 @@ function harness() {
     const state = context.controller.state;
     Rules.applyThrow(state, Rules.outcomeFor(name)); context.controller.renderGame();
     const resultId = state.results[0].id, token = Rules.groups(state, Rules.currentPlayer(state).ownerId)[0];
-    click('result-list', { result: resultId }); click('piece-list', { piece: token.id });
     const move = Rules.legalActions(state).find(a => a.resultId === resultId && a.tokenId === token.id && a.destination === destination);
-    click('destination-list', { action: move.id });
+    click('result-list', { result: resultId }); click('piece-list', { piece: token.id });
+    if (!elements['destination-section'].hidden) click('destination-list', { action: move.id });
   }
   return { context, controller: context.controller, elements, tick, click, submit, setupDefault, forceMove, tasks, target };
 }
@@ -94,17 +94,52 @@ test('team setup fills empty seats and swaps participants while retaining shared
   assert.equal(state.players[0].type, 'ai'); assert.equal(state.players[1].type, 'human');
   assert.equal(h.tasks.size, 1);
 });
-test('human result and piece selections never auto-confirm even a single destination', () => {
+test('human result selection waits for a piece, then a single route moves immediately', () => {
   const h = harness(), state = h.setupDefault();
   Rules.applyThrow(state, Rules.outcomeFor('도')); h.controller.renderGame();
   h.click('result-list', { result: state.results[0].id });
+  assert.ok(state.tokens.every(token => token.status === 'waiting'));
+  assert.equal(h.elements['destination-section'].hidden, true);
+  const token = state.tokens[1];
+  h.click('piece-list', { piece: token.id });
+  assert.equal(token.position, 'O1'); assert.equal(state.turnIndex, 1);
   assert.equal(state.tokens[0].status, 'waiting');
-  h.click('piece-list', { piece: state.tokens[0].id });
-  assert.equal(state.tokens[0].status, 'waiting');
+  assert.equal(state.results.length, 0);
+  assert.equal(h.elements['destination-section'].hidden, true);
+  assert.equal(h.elements['destination-list'].innerHTML, '');
+  const snapshot = JSON.stringify(state);
+  h.click('piece-list', { piece: token.id });
+  assert.equal(JSON.stringify(state), snapshot);
+});
+
+test('single-route board selections move immediately, including backdo to waiting', () => {
+  for (const name of ['도', '빽도']) {
+    const h = harness(), state = h.setupDefault(), token = state.tokens[0];
+    Object.assign(token, { status: 'board', position: 'O1', history: ['H', 'O1'] });
+    Rules.applyThrow(state, Rules.outcomeFor(name)); h.controller.renderGame();
+    h.click('result-list', { result: state.results[0].id });
+    h.click('board-container', { boardPiece: token.id });
+    assert.equal(token.status, name === '빽도' ? 'waiting' : 'board');
+    assert.equal(token.position, name === '빽도' ? null : 'O2');
+    assert.equal(state.turnIndex, 1);
+    assert.equal(h.elements['destination-section'].hidden, true);
+  }
+});
+
+test('multiple routes wait for an explicit destination choice', () => {
+  const h = harness(), state = h.setupDefault(), token = state.tokens[0];
+  Object.assign(token, { status: 'board', position: 'O5', history: ['H', 'O1', 'O2', 'O3', 'O4', 'O5'] });
+  Rules.applyThrow(state, Rules.outcomeFor('도')); h.controller.renderGame();
+  const resultId = state.results[0].id;
+  h.click('result-list', { result: resultId }); h.click('piece-list', { piece: token.id });
+  assert.equal(token.position, 'O5'); assert.equal(state.turnIndex, 0);
+  assert.equal(state.results.length, 1);
   assert.equal(h.elements['destination-section'].hidden, false);
-  assert.ok(h.elements['destination-list'].innerHTML.includes(Rules.NODES.O1.label));
-  h.click('destination-list', { action: Rules.legalActions(state)[0].id });
-  assert.equal(state.tokens[0].position, 'O1'); assert.equal(state.turnIndex, 1);
+  assert.equal((h.elements['destination-list'].innerHTML.match(/data-action=/g) || []).length, 2);
+  const shortcut = Rules.legalActions(state).find(action => action.resultId === resultId && action.tokenId === token.id && action.destination === 'R1');
+  h.click('destination-list', { action: shortcut.id });
+  assert.equal(token.position, 'R1'); assert.equal(state.turnIndex, 1);
+  assert.equal(h.elements['destination-section'].hidden, true);
 });
 test('throw animation locks duplicate inputs and commits exactly one result', () => {
   const h = harness(), state = h.setupDefault();
@@ -153,7 +188,6 @@ test('victory preserves final board, opens result dialog, and replay fully reset
   for (const token of state.tokens.filter(t => t.ownerId === 'p1')) Object.assign(token, { status: 'board', position: 'O19', history: ['H', 'O19'], groupId: 'p1-1' });
   state.results = [{ id: 'finish', name: '도', value: 1 }, { id: 'unused', name: '개', value: 2 }]; state.remainingThrows = 0; state.phase = 'move'; h.controller.renderGame();
   h.click('result-list', { result: 'finish' }); h.click('piece-list', { piece: 'p1-1' });
-  h.click('destination-list', { action: Rules.legalActions(state)[0].id });
   assert.equal(state.winner, 'p1'); assert.equal(state.results.length, 0); assert.equal(h.tasks.size, 0);
   assert.match(h.elements['dialog-content'].innerHTML, /승리!/);
   h.click('game-dialog', { dialogAction: 'close' }); assert.equal(h.elements['game-dialog'].open, false); assert.equal(state.winner, 'p1');
